@@ -1,0 +1,36 @@
+void beatsin_composite_pattern(bool Red, bool Green) {
+  if (millis() < light_turned_on + initial_interval + pattern_interval) {
+    debugln("Running Beat Sine Comosite Pattern.");
+  }
+  while (millis() < light_turned_on + initial_interval + pattern_interval) {
+    EVERY_N_MILLISECONDS(200) {
+      wdt_reset();
+    }
+    // Waves for LED position
+    uint8_t posBeat  = beatsin8(30, 0, NUM_LEDS - 1, 0, 0);
+    uint8_t posBeat2 = beatsin8(60, 0, NUM_LEDS - 1, 0, 0);
+    uint8_t posBeat3 = beatsin16(30, 0, NUM_LEDS - 1, 0, 127);
+    uint8_t posBeat4 = beatsin16(60, 0, NUM_LEDS - 1, 0, 127);
+
+    // Wave for LED color
+    uint8_t colBeat_Green  = beatsin8(45, 80, 130, 0, 0); // Green
+    uint8_t colBeat_Red  = beatsin8(45, 0, 45, 0, 0); // Red
+
+    if (Red == true && Green == true) {
+      // Left Side
+      leds[(posBeat + posBeat2) / 4]  = CHSV(colBeat_Red, 255, 255);
+      leds[(posBeat3 + posBeat4) / 4]  = CHSV(colBeat_Red, 255, 255);
+      // Right Side
+      leds[(posBeat + posBeat2) / 4 + NUM_LEDS / 2]  = CHSV(colBeat_Green, 255, 255);
+      leds[(posBeat3 + posBeat4) / 4 + NUM_LEDS / 2]  = CHSV(colBeat_Green, 255, 255);
+    } else if (Red == true && Green == false) {
+      leds[(posBeat + posBeat2) / 2]  = CHSV(colBeat_Red, 255, 255);
+      leds[(posBeat3 + posBeat4) / 2]  = CHSV(colBeat_Red, 255, 255);
+    }  else if (Red == false && Green == true) {
+      leds[(posBeat + posBeat2) / 2]  = CHSV(colBeat_Green, 255, 255);
+      leds[(posBeat3 + posBeat4) / 2]  = CHSV(colBeat_Green, 255, 255);
+    }
+    fadeToBlackBy(leds, NUM_LEDS, 3);
+    FastLED.show();
+  }
+}
